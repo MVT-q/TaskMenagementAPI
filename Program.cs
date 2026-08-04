@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TaskMenagementAPI.Data;
+using TaskMenagementAPI.Models;
+using TaskMenagementAPI.Services;
 
 namespace TaskMenagementAPI
 {
@@ -19,6 +22,10 @@ namespace TaskMenagementAPI
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+
+            builder.Services.AddScoped<AuthService>();
 
             var app = builder.Build();
 
