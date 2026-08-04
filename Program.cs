@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using TaskMenagementAPI.Data;
 
 namespace TaskMenagementAPI
 {
@@ -8,8 +10,15 @@ namespace TaskMenagementAPI
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddControllers();
+
             builder.Services.AddEndpointsApiExplorer();
+
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDbContext<AppDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
 
             var app = builder.Build();
 
