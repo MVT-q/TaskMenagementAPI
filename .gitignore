@@ -1,0 +1,37 @@
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+
+# Visual Studio
+.vs/
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# NuGet packages
+*.nupkg
+
+# Publish output
+publish/
+
+# Entity Framework
+*.dbmdl
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Secrets
+secrets.json
+appsettings.Development.json
