@@ -7,6 +7,7 @@ using System.Text;
 using TaskMenagementAPI.Data;
 using TaskMenagementAPI.DTOs;
 using TaskMenagementAPI.Enums;
+using TaskMenagementAPI.Exceptions;
 using TaskMenagementAPI.Models;
 
 namespace TaskMenagementAPI.Services
@@ -76,6 +77,9 @@ namespace TaskMenagementAPI.Services
         public async Task RegisterAsync(RegisterDto request)
         {
             bool exists = await _context.Users.AnyAsync(u => u.Username == request.Username);
+
+            if (exists)
+                throw new UserAlreadyExistsException("Username already exists");
 
             var user = new User
             {

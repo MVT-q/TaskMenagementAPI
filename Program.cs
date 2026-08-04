@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Threading.Tasks;
 using TaskMenagementAPI.Data;
+using TaskMenagementAPI.Middleware;
 using TaskMenagementAPI.Models;
 using TaskMenagementAPI.Services;
 using TaskMenagementAPI.Settings;
@@ -91,6 +92,8 @@ namespace TaskMenagementAPI
             }
 
             app.UseHttpsRedirection();
+
+            app.UseExceptionHandlingMiddleware();
 
             app.UseAuthentication();
 
