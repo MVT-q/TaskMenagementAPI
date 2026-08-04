@@ -3,15 +3,17 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Threading.Tasks;
 using TaskMenagementAPI.Data;
 using TaskMenagementAPI.Models;
 using TaskMenagementAPI.Services;
+using TaskMenagementAPI.Settings;
 
 namespace TaskMenagementAPI
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -71,9 +73,14 @@ namespace TaskMenagementAPI
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            builder.Services.Configure<OwnerSettings>(
+                builder.Configuration.GetSection("Owner"));
+
             builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
             builder.Services.AddScoped<AuthService>();
+
+            builder.Services.AddScoped<UserService>();
 
             var app = builder.Build();
 
@@ -90,6 +97,12 @@ namespace TaskMenagementAPI
             app.UseAuthorization();
 
             app.MapControllers();
+
+            using var scope = app.Services.CreateScope();
+
+            var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+
+            await userService.CreateOwner();
 
             app.Run();
         }
