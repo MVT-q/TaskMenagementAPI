@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TaskMenagementAPI.Models;
 
 namespace TaskMenagementAPI.Data
 {
@@ -6,5 +7,7 @@ namespace TaskMenagementAPI.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options) { }
+
+        public DbSet<User> Users { get; set; } = null!;
     }
 }
