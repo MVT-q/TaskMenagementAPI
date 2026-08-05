@@ -10,7 +10,7 @@ namespace TaskMenagementAPI.Models
 
         public string PasswordHash { get; set; } = "";
 
-        public UserRole Role { get; set; } = UserRole.Member;
+        public UserRole Role { get; set; } = UserRole.User;
 
         public ICollection<Project> Projects { get; set; } = new List<Project>();
     }

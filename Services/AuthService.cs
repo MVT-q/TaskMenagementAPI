@@ -84,7 +84,7 @@ namespace TaskMenagementAPI.Services
             var user = new User
             {
                 Username = request.Username,
-                Role = UserRole.Member
+                Role = UserRole.User
             };
 
             user.PasswordHash = _passwordHasher.HashPassword(user, request.Password);

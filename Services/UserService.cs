@@ -12,33 +12,33 @@ namespace TaskMenagementAPI.Services
     {
         private readonly AppDbContext _context;
 
-        private readonly OwnerSettings _ownerSettings;
+        private readonly AdminSettings _adminSettings;
 
         private readonly IPasswordHasher<User> _passwordHasher;
 
-        public UserService(AppDbContext context, IOptions<OwnerSettings> ownerSettings, IPasswordHasher<User> passwordHasher)
+        public UserService(AppDbContext context, IOptions<AdminSettings> adminSettings, IPasswordHasher<User> passwordHasher)
         {
             _context = context;
-            _ownerSettings = ownerSettings.Value;
+            _adminSettings = adminSettings.Value;
             _passwordHasher = passwordHasher;
         }
 
-        public async Task CreateOwner()
+        public async Task CreateAdmin()
         {
-            var exists = await _context.Users.AnyAsync(u => u.Role == UserRole.Owner);
+            var exists = await _context.Users.AnyAsync(u => u.Role == UserRole.Admin);
 
             if (exists)
                 return;
 
-            var owner = new User
+            var admin = new User
             {
-                Username = _ownerSettings.Username,
-                Role = UserRole.Owner
+                Username = _adminSettings.Username,
+                Role = UserRole.Admin
             };
 
-            owner.PasswordHash = _passwordHasher.HashPassword(owner, _ownerSettings.Password);
+            admin.PasswordHash = _passwordHasher.HashPassword(admin, _adminSettings.Password);
 
-            _context.Add(owner);
+            _context.Add(admin);
 
             await _context.SaveChangesAsync();
         }

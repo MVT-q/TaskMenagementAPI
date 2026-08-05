@@ -74,8 +74,8 @@ namespace TaskMenagementAPI
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            builder.Services.Configure<OwnerSettings>(
-                builder.Configuration.GetSection("Owner"));
+            builder.Services.Configure<AdminSettings>(
+                builder.Configuration.GetSection("Admin"));
 
             builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
@@ -105,7 +105,7 @@ namespace TaskMenagementAPI
 
             var userService = scope.ServiceProvider.GetRequiredService<UserService>();
 
-            await userService.CreateOwner();
+            await userService.CreateAdmin();
 
             app.Run();
         }

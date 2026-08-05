@@ -1,6 +1,6 @@
 ﻿namespace TaskMenagementAPI.Settings
 {
-    public class OwnerSettings
+    public class AdminSettings
     {
         public string Username { get; set; } = "";
 
