@@ -11,5 +11,7 @@ namespace TaskMenagementAPI.Models
         public string PasswordHash { get; set; } = "";
 
         public UserRole Role { get; set; } = UserRole.Member;
+
+        public ICollection<Project> Projects { get; set; } = new List<Project>();
     }
 }

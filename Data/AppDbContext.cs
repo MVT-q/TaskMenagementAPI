@@ -9,5 +9,9 @@ namespace TaskMenagementAPI.Data
             : base(options) { }
 
         public DbSet<User> Users { get; set; } = null!;
+
+        public DbSet<Project> Projects { get; set; } = null!;
+
+        public DbSet<ProjectTask> Tasks { get; set; } = null!;
     }
 }
