@@ -23,6 +23,10 @@ namespace TaskMenagementAPI.Middleware
                 {
                     UserAlreadyExistsException => StatusCodes.Status409Conflict,
 
+                    CurrentUserNotFoundException => StatusCodes.Status400BadRequest,
+
+                    AccessDeniedException => StatusCodes.Status403Forbidden,
+
                     _ => StatusCodes.Status500InternalServerError
                 };
 
