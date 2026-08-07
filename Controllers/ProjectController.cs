@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TaskMenagementAPI.DTOs;
+using TaskMenagementAPI.DTOs.Projects;
 using TaskMenagementAPI.Models;
 using TaskMenagementAPI.Services;
 

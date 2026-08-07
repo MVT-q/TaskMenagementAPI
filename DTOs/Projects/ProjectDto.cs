@@ -1,4 +1,4 @@
-﻿namespace TaskMenagementAPI.DTOs
+﻿namespace TaskMenagementAPI.DTOs.Projects
 {
     public class ProjectDto
     {

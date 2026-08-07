@@ -5,7 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using TaskMenagementAPI.Data;
-using TaskMenagementAPI.DTOs;
+using TaskMenagementAPI.DTOs.Auth;
 using TaskMenagementAPI.Enums;
 using TaskMenagementAPI.Exceptions;
 using TaskMenagementAPI.Models;

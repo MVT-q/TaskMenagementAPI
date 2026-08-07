@@ -1,6 +1,6 @@
-﻿namespace TaskMenagementAPI.DTOs
+﻿namespace TaskMenagementAPI.DTOs.Projects
 {
-    public class CreateProjectDto
+    public class UpdateProjectDto
     {
         public string Name { get; set; } = "";
 

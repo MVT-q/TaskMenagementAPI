@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TaskMenagementAPI.Data;
-using TaskMenagementAPI.DTOs;
+using TaskMenagementAPI.DTOs.Projects;
 using TaskMenagementAPI.Exceptions;
 using TaskMenagementAPI.Models;
 

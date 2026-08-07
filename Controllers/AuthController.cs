@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TaskMenagementAPI.DTOs;
+using TaskMenagementAPI.DTOs.Auth;
 using TaskMenagementAPI.Services;
 
 namespace TaskMenagementAPI.Controllers

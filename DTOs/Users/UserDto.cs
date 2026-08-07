@@ -1,6 +1,6 @@
 ﻿using TaskMenagementAPI.Enums;
 
-namespace TaskMenagementAPI.DTOs
+namespace TaskMenagementAPI.DTOs.Users
 {
     public class UserDto
     {
