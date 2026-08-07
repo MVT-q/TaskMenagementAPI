@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskMenagementAPI.DTOs;
+using TaskMenagementAPI.Models;
 using TaskMenagementAPI.Services;
 
 namespace TaskMenagementAPI.Controllers
@@ -38,6 +39,13 @@ namespace TaskMenagementAPI.Controllers
                 nameof(GetProjectById),
                 new { id = project.Id },
                 project);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ProjectDto>>> GetMyProjects()
+        {
+            return Ok(await _projectService.GetMyProjectsAsync(CurrentUserId));
         }
     }
 }

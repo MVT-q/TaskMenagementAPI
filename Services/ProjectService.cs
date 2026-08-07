@@ -45,6 +45,14 @@ namespace TaskMenagementAPI.Services
             return ToDto(project);
         }
 
+        public async Task<List<ProjectDto>> GetMyProjectsAsync(int currentUserId)
+        {
+            var projects = await _context.Projects
+                .Where(p => p.OwnerId == currentUserId).ToListAsync();  
+            
+            return projects.Select(ToDto).ToList();
+        }
+
         private static ProjectDto ToDto(Project project)
         {
             return new ProjectDto
