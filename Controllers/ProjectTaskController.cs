@@ -32,9 +32,9 @@ namespace TaskMenagementAPI.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<ProjectTaskDto>> Create(int projectId, CreateProjectTaskDto dto)
+        public async Task<ActionResult<ProjectTaskDto>> CreateTask(int projectId, CreateProjectTaskDto dto)
         {
-            var task = await _projectTaskService.CreateAsync(projectId, dto, CurrentUserId);
+            var task = await _projectTaskService.CreateTaskAsync(projectId, dto, CurrentUserId);
 
             return CreatedAtAction(
                 nameof(GetTaskById),
@@ -51,6 +51,30 @@ namespace TaskMenagementAPI.Controllers
         public async Task<ActionResult<IEnumerable<ProjectTaskDto>>> GetProjectTasks(int projectId)
         {
             return Ok(await _projectTaskService.GetProjectTasksAsync(projectId, CurrentUserId));
+        }
+
+        [Authorize]
+        [HttpPut("{taskId}")]
+        public async Task<ActionResult<ProjectTaskDto>> UpdateProjectTask(int projectId, int taskId, UpdateProjectTaskDto dto)
+        {
+            var task = await _projectTaskService.UpdateProjectTaskAsync(projectId, CurrentUserId, taskId, dto);
+
+            if(task == null)
+                return NotFound();
+
+            return Ok(task);
+        }
+
+        [Authorize]
+        [HttpDelete("{taskId}")]
+        public async Task<IActionResult> DeleteProjectTask(int projectId, int taskId)
+        {
+            var delete = await _projectTaskService.DeleteProjectTaskAsync(projectId, CurrentUserId, taskId);
+
+            if (!delete)
+                return NotFound();
+
+            return NoContent();
         }
     }
 }
