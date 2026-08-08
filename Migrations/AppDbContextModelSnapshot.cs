@@ -48,7 +48,7 @@ namespace TaskMenagementAPI.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Projects", (string)null);
                 });
 
             modelBuilder.Entity("TaskMenagementAPI.Models.ProjectTask", b =>
@@ -77,7 +77,7 @@ namespace TaskMenagementAPI.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Tasks");
+                    b.ToTable("Tasks", (string)null);
                 });
 
             modelBuilder.Entity("TaskMenagementAPI.Models.User", b =>
@@ -101,7 +101,7 @@ namespace TaskMenagementAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("TaskMenagementAPI.Models.Project", b =>

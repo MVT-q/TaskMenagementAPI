@@ -31,9 +31,9 @@ namespace TaskMenagementAPI.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<ProjectDto>> Create(CreateProjectDto dto)
+        public async Task<ActionResult<ProjectDto>> CreateProject(CreateProjectDto dto)
         {
-            var project = await _projectService.CreateAsync(dto, CurrentUserId);
+            var project = await _projectService.CreateProjectAsync(dto, CurrentUserId);
 
             return CreatedAtAction(
                 nameof(GetProjectById),
@@ -46,6 +46,30 @@ namespace TaskMenagementAPI.Controllers
         public async Task<ActionResult<IEnumerable<ProjectDto>>> GetMyProjects()
         {
             return Ok(await _projectService.GetMyProjectsAsync(CurrentUserId));
+        }
+
+        [Authorize]
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ProjectDto>> UpdateProject(int id, UpdateProjectDto dto)
+        {
+            var project = await _projectService.UpdateProjectAsync(id, CurrentUserId, dto);
+
+            if(project == null)
+                return NotFound();
+
+            return Ok(project);
+        }
+
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProject(int id)
+        {
+            var delete = await _projectService.DeleteProject(id, CurrentUserId);
+
+            if(!delete)
+                return NotFound();
+
+            return NoContent();
         }
     }
 }

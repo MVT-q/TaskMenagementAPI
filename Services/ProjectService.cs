@@ -28,7 +28,7 @@ namespace TaskMenagementAPI.Services
             return ToDto(project);
         }
 
-        public async Task<ProjectDto> CreateAsync(CreateProjectDto dto, int currentUserId)
+        public async Task<ProjectDto> CreateProjectAsync(CreateProjectDto dto, int currentUserId)
         {
             var project = new Project
             {
@@ -51,6 +51,41 @@ namespace TaskMenagementAPI.Services
                 .Where(p => p.OwnerId == currentUserId).ToListAsync();  
             
             return projects.Select(ToDto).ToList();
+        }
+
+        public async Task<ProjectDto?> UpdateProjectAsync(int id, int currentUserId, UpdateProjectDto dto)
+        {
+            var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == id);        
+
+            if (project == null)
+                return null;
+
+            if (project.OwnerId != currentUserId)
+                throw new AccessDeniedException("Access to this project is denied");
+
+            project.Name = dto.Name;
+            project.Description = dto.Description;
+
+            await _context.SaveChangesAsync();
+
+            return ToDto(project);
+        }
+
+        public async Task<bool> DeleteProject(int id, int currentUserId)
+        {
+            var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == id);
+
+            if(project == null)
+                return false;
+
+            if (project.OwnerId != currentUserId)
+                throw new AccessDeniedException("Access to this project is denied");
+
+            _context.Projects.Remove(project);
+
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
         private static ProjectDto ToDto(Project project)
