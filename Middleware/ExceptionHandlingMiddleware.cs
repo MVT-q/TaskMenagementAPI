@@ -24,6 +24,7 @@ namespace TaskMenagementAPI.Middleware
                     UserAlreadyExistsException => StatusCodes.Status409Conflict,
 
                     CurrentUserNotFoundException => StatusCodes.Status400BadRequest,
+                    InvalidProjectTaskStatusException => StatusCodes.Status400BadRequest,
 
                     AccessDeniedException => StatusCodes.Status403Forbidden,
 

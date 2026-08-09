@@ -89,5 +89,17 @@ namespace TaskMenagementAPI.Controllers
 
             return NoContent();
         }
+
+        [Authorize]
+        [HttpPatch("{taskId}/status")]
+        public async Task<ActionResult<ProjectTaskDto>> UpdateTaskStatus(int projectId, int taskId, UpdateProjectTaskStatusDto dto)
+        {
+            var task = await _projectTaskService.UpdateTaskStatusAsync(projectId, taskId, CurrentUserId, dto);
+
+            if (task == null)
+                return NotFound();
+
+            return Ok(task);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Threading.Tasks;
 using TaskMenagementAPI.Data;
 using TaskMenagementAPI.DTOs.Projects;
@@ -111,6 +112,30 @@ namespace TaskMenagementAPI.Services
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<ProjectTaskDto?> UpdateTaskStatusAsync(int projectId, int taskId, int currentUserId, UpdateProjectTaskStatusDto dto)
+        {
+            if (await _projectAccessService
+                .GetOwnedProjectAsync(projectId, currentUserId) == null)
+                return null;
+
+            var task = await _context.Tasks
+                .FirstOrDefaultAsync(t =>
+                    t.Id == taskId &&
+                    t.ProjectId == projectId);
+
+            if (task == null)
+                return null;
+
+            if (!Enum.IsDefined(dto.Status))
+                throw new InvalidProjectTaskStatusException("Invalid project task status");
+
+            task.Status = dto.Status;
+
+            await _context.SaveChangesAsync();
+
+            return ToDto(task);
         }
 
         private static ProjectTaskDto ToDto(ProjectTask task)
