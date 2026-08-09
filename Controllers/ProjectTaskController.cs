@@ -36,6 +36,9 @@ namespace TaskMenagementAPI.Controllers
         {
             var task = await _projectTaskService.CreateTaskAsync(projectId, dto, CurrentUserId);
 
+            if(task == null)
+                return NotFound();
+
             return CreatedAtAction(
                 nameof(GetTaskById),
                 new

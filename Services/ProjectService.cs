@@ -10,20 +10,21 @@ namespace TaskMenagementAPI.Services
     {
         private readonly AppDbContext _context;
 
-        public ProjectService(AppDbContext context)
+        private readonly ProjectAccessService _projectAccessService;
+
+        public ProjectService(AppDbContext context, ProjectAccessService projectAccessService)
         {
             _context = context;
+            _projectAccessService = projectAccessService;
         }
 
         public async Task<ProjectDto?> GetProjectByIdAsync(int id, int currentUserId)
         {
-            var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == id);
+            var project = await _projectAccessService
+                .GetOwnedProjectAsync(id, currentUserId);
 
             if (project == null)
                 return null;
-
-            if (project.OwnerId != currentUserId)
-                throw new AccessDeniedException("Access to this project is denied");
 
             return ToDto(project);
         }
@@ -55,13 +56,11 @@ namespace TaskMenagementAPI.Services
 
         public async Task<ProjectDto?> UpdateProjectAsync(int id, int currentUserId, UpdateProjectDto dto)
         {
-            var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == id);        
+            var project = await _projectAccessService
+                .GetOwnedProjectAsync(id, currentUserId);
 
             if (project == null)
                 return null;
-
-            if (project.OwnerId != currentUserId)
-                throw new AccessDeniedException("Access to this project is denied");
 
             project.Name = dto.Name;
             project.Description = dto.Description;
@@ -73,13 +72,11 @@ namespace TaskMenagementAPI.Services
 
         public async Task<bool> DeleteProject(int id, int currentUserId)
         {
-            var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == id);
+            var project = await _projectAccessService
+                .GetOwnedProjectAsync(id, currentUserId);
 
-            if(project == null)
+            if (project == null)
                 return false;
-
-            if (project.OwnerId != currentUserId)
-                throw new AccessDeniedException("Access to this project is denied");
 
             _context.Projects.Remove(project);
 

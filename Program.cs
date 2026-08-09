@@ -87,6 +87,8 @@ namespace TaskMenagementAPI
 
             builder.Services.AddScoped<ProjectTaskService>();
 
+            builder.Services.AddScoped<ProjectAccessService>();
+
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())

@@ -12,21 +12,19 @@ namespace TaskMenagementAPI.Services
     {
         private readonly AppDbContext _context;
 
-        public ProjectTaskService(AppDbContext context)
+        private readonly ProjectAccessService _projectAccessService;
+
+        public ProjectTaskService(AppDbContext context, ProjectAccessService projectAccessService)
         {
             _context = context;
+            _projectAccessService = projectAccessService;
         }
 
         public async Task<ProjectTaskDto?> GetTaskByIdAsync(int projectId, int currentUserId, int taskId)
         {
-            var project = await _context.Projects
-                .FirstOrDefaultAsync(p => p.Id == projectId);
-
-            if (project == null)
+            if (await _projectAccessService
+                .GetOwnedProjectAsync(projectId, currentUserId) == null)
                 return null;
-
-            if (project.OwnerId != currentUserId)
-                throw new AccessDeniedException("Access to this project is denied");
 
             var task = await _context.Tasks
                 .FirstOrDefaultAsync(t =>
@@ -41,14 +39,9 @@ namespace TaskMenagementAPI.Services
 
         public async Task<ProjectTaskDto?> CreateTaskAsync(int projectId, CreateProjectTaskDto dto, int currentUserId)
         {
-            var project = await _context.Projects
-                .FirstOrDefaultAsync(p => p.Id == projectId);
-
-            if (project == null)
+            if (await _projectAccessService
+                .GetOwnedProjectAsync(projectId, currentUserId) == null)
                 return null;
-
-            if(project.OwnerId != currentUserId) 
-                throw new AccessDeniedException("Access to this project is denied");
 
             var task = new ProjectTask
             {
@@ -66,14 +59,9 @@ namespace TaskMenagementAPI.Services
 
         public async Task<List<ProjectTaskDto>?> GetProjectTasksAsync(int projectId, int currentUserId)
         {
-            var project = await _context.Projects
-                .FirstOrDefaultAsync(p => p.Id == projectId);
-
-            if (project == null)
+            if (await _projectAccessService
+                .GetOwnedProjectAsync(projectId, currentUserId) == null)
                 return null;
-
-            if (project.OwnerId != currentUserId)
-                throw new AccessDeniedException("Access to this project is denied");
 
             var tasks = await _context.Tasks
                 .Where(t => t.ProjectId == projectId)
@@ -84,14 +72,9 @@ namespace TaskMenagementAPI.Services
 
         public async Task<ProjectTaskDto?> UpdateProjectTaskAsync(int projectId, int currentUserId, int taskId, UpdateProjectTaskDto dto)
         {
-            var project = await _context.Projects
-                .FirstOrDefaultAsync(p => p.Id == projectId);
-
-            if (project == null)
+            if (await _projectAccessService
+                .GetOwnedProjectAsync(projectId, currentUserId) == null)
                 return null;
-
-            if (project.OwnerId != currentUserId)
-                throw new AccessDeniedException("Access to this project is denied");
 
             var task = await _context.Tasks
                 .FirstOrDefaultAsync(t =>
@@ -111,13 +94,9 @@ namespace TaskMenagementAPI.Services
 
         public async Task<bool> DeleteProjectTaskAsync(int projectId, int currentUserId, int taskId)
         {
-            var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
-
-            if (project == null)
+            if (await _projectAccessService
+                .GetOwnedProjectAsync(projectId, currentUserId) == null)
                 return false;
-
-            if (project.OwnerId != currentUserId)
-                throw new AccessDeniedException("Access to this project is denied");
 
             var task = await _context.Tasks
                 .FirstOrDefaultAsync(t =>
