@@ -14,9 +14,7 @@ namespace TaskMenagementAPI.Services
             _context = context;
         }
 
-        public async Task<Project?> GetOwnedProjectAsync(
-        int projectId,
-        int currentUserId)
+        public async Task<Project?> GetOwnedProjectAsync(int projectId, int currentUserId)
         {
             var project = await _context.Projects
                 .FirstOrDefaultAsync(p => p.Id == projectId);

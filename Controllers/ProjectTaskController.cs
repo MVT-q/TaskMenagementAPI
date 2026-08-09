@@ -22,7 +22,8 @@ namespace TaskMenagementAPI.Controllers
         [HttpGet("{taskId}")]
         public async Task<ActionResult<ProjectTaskDto>> GetTaskById(int projectId, int taskId)
         {
-            var task = await _projectTaskService.GetTaskByIdAsync(projectId, CurrentUserId, taskId);
+            var task = await _projectTaskService
+                .GetTaskByIdAsync(projectId, CurrentUserId, taskId);
 
             if (task == null)
                 return NotFound();
@@ -34,7 +35,8 @@ namespace TaskMenagementAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ProjectTaskDto>> CreateTask(int projectId, CreateProjectTaskDto dto)
         {
-            var task = await _projectTaskService.CreateTaskAsync(projectId, dto, CurrentUserId);
+            var task = await _projectTaskService
+                .CreateTaskAsync(projectId, dto, CurrentUserId);
 
             if(task == null)
                 return NotFound();
@@ -53,14 +55,21 @@ namespace TaskMenagementAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProjectTaskDto>>> GetProjectTasks(int projectId)
         {
-            return Ok(await _projectTaskService.GetProjectTasksAsync(projectId, CurrentUserId));
+            var tasks = await _projectTaskService
+                .GetProjectTasksAsync(projectId, CurrentUserId);
+
+            if (tasks == null)
+                return NotFound();
+
+            return Ok(tasks);
         }
 
         [Authorize]
         [HttpPut("{taskId}")]
         public async Task<ActionResult<ProjectTaskDto>> UpdateProjectTask(int projectId, int taskId, UpdateProjectTaskDto dto)
         {
-            var task = await _projectTaskService.UpdateProjectTaskAsync(projectId, CurrentUserId, taskId, dto);
+            var task = await _projectTaskService
+                .UpdateProjectTaskAsync(projectId, CurrentUserId, taskId, dto);
 
             if(task == null)
                 return NotFound();
@@ -72,7 +81,8 @@ namespace TaskMenagementAPI.Controllers
         [HttpDelete("{taskId}")]
         public async Task<IActionResult> DeleteProjectTask(int projectId, int taskId)
         {
-            var delete = await _projectTaskService.DeleteProjectTaskAsync(projectId, CurrentUserId, taskId);
+            var delete = await _projectTaskService
+                .DeleteProjectTaskAsync(projectId, CurrentUserId, taskId);
 
             if (!delete)
                 return NotFound();

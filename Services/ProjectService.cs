@@ -49,7 +49,8 @@ namespace TaskMenagementAPI.Services
         public async Task<List<ProjectDto>> GetMyProjectsAsync(int currentUserId)
         {
             var projects = await _context.Projects
-                .Where(p => p.OwnerId == currentUserId).ToListAsync();  
+                .Where(p => p.OwnerId == currentUserId)
+                .ToListAsync();  
             
             return projects.Select(ToDto).ToList();
         }
@@ -70,7 +71,7 @@ namespace TaskMenagementAPI.Services
             return ToDto(project);
         }
 
-        public async Task<bool> DeleteProject(int id, int currentUserId)
+        public async Task<bool> DeleteProjectAsync(int id, int currentUserId)
         {
             var project = await _projectAccessService
                 .GetOwnedProjectAsync(id, currentUserId);
