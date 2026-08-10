@@ -17,5 +17,7 @@ namespace TaskMenagementAPI.Models
         public ProjectTaskStatus Status { get; set; } = ProjectTaskStatus.Todo;
 
         public ProjectTaskPriority Priority { get; set; } = ProjectTaskPriority.Medium;
+
+        public DateTime? DueDate { get; set; }
     }
 }

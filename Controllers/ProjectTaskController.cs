@@ -113,5 +113,17 @@ namespace TaskMenagementAPI.Controllers
 
             return Ok(task);
         }
+
+        [Authorize]
+        [HttpPatch("{taskId}/due-date")]
+        public async Task<ActionResult<ProjectTaskDto>> UpdateTaskDueDate(int projectId, int taskId, UpdateProjectTaskDueDateDto dto)
+        {
+            var task = await _projectTaskService.UpdateTaskDueDateAsync(projectId, taskId, CurrentUserId, dto);
+
+            if (task == null)
+                return NotFound();
+
+            return Ok(task);
+        }
     }
 }

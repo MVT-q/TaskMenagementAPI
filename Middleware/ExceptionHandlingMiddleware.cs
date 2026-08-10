@@ -26,6 +26,7 @@ namespace TaskMenagementAPI.Middleware
                     CurrentUserNotFoundException => StatusCodes.Status400BadRequest,
                     InvalidProjectTaskStatusException => StatusCodes.Status400BadRequest,
                     InvalidProjectTaskPriorityException => StatusCodes.Status400BadRequest,
+                    InvalidDueDateException => StatusCodes.Status400BadRequest,
 
                     AccessDeniedException => StatusCodes.Status403Forbidden,
 

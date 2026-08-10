@@ -44,11 +44,15 @@ namespace TaskMenagementAPI.Services
                 .GetOwnedProjectAsync(projectId, currentUserId) == null)
                 return null;
 
+            if(dto.DueDate < DateTime.UtcNow)
+                throw new InvalidDueDateException("Date cannot be earlier than current date");
+
             var task = new ProjectTask
             {
                 Title = dto.Title,
                 Description = dto.Description,
-                ProjectId = projectId
+                ProjectId = projectId,
+                DueDate = dto.DueDate
             };
 
             _context.Tasks.Add(task);
@@ -162,6 +166,30 @@ namespace TaskMenagementAPI.Services
             return ToDto(task);
         }
 
+        public async Task<ProjectTaskDto?> UpdateTaskDueDateAsync(int projectId, int taskId, int currentUserId, UpdateProjectTaskDueDateDto dto)
+        {
+            if (await _projectAccessService
+                .GetOwnedProjectAsync(projectId, currentUserId) == null)
+                return null;
+
+            var task = await _context.Tasks
+                .FirstOrDefaultAsync(t =>
+                    t.Id == taskId &&
+                    t.ProjectId == projectId);
+
+            if (task == null)
+                return null;
+
+            if (dto.DueDate < DateTime.UtcNow)
+                throw new InvalidDueDateException("Date cannot be earlier than current date");
+
+            task.DueDate = dto.DueDate;
+
+            await _context.SaveChangesAsync();
+
+            return ToDto(task);
+        }
+
         private static ProjectTaskDto ToDto(ProjectTask task)
         {
             return new ProjectTaskDto
@@ -171,6 +199,7 @@ namespace TaskMenagementAPI.Services
                 Description = task.Description,
                 Status = task.Status,
                 Priority = task.Priority,
+                DueDate = task.DueDate
             };
         }
     }
