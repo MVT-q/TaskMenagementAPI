@@ -138,6 +138,30 @@ namespace TaskMenagementAPI.Services
             return ToDto(task);
         }
 
+        public async Task<ProjectTaskDto?> UpdateTaskPriorityAsync(int projectId, int taskId, int currentUserId, UpdateProjectTaskPriorityDto dto)
+        {
+            if (await _projectAccessService
+                .GetOwnedProjectAsync(projectId, currentUserId) == null)
+                return null;
+
+            var task = await _context.Tasks
+                .FirstOrDefaultAsync(t =>
+                    t.Id == taskId &&
+                    t.ProjectId == projectId);
+
+            if (task == null)
+                return null;
+
+            if (!Enum.IsDefined(dto.Priority))
+                throw new InvalidProjectTaskPriorityException("Invalid project task priority");
+
+            task.Priority = dto.Priority;
+
+            await _context.SaveChangesAsync();
+
+            return ToDto(task);
+        }
+
         private static ProjectTaskDto ToDto(ProjectTask task)
         {
             return new ProjectTaskDto

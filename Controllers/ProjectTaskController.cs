@@ -101,5 +101,17 @@ namespace TaskMenagementAPI.Controllers
 
             return Ok(task);
         }
+
+        [Authorize]
+        [HttpPatch("{taskId}/priority")]
+        public async Task<ActionResult<ProjectTaskDto>> UpdateTaskPriority(int projectId, int taskId, UpdateProjectTaskPriorityDto dto)
+        {
+            var task = await _projectTaskService.UpdateTaskPriorityAsync(projectId, taskId, CurrentUserId, dto);
+
+            if (task == null)
+                return NotFound();
+
+            return Ok(task);
+        }
     }
 }
