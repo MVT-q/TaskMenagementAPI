@@ -145,7 +145,8 @@ namespace TaskMenagementAPI.Services
                 Id = task.Id,
                 Title = task.Title,
                 Description = task.Description,
-                Status = task.Status
+                Status = task.Status,
+                Priority = task.Priority,
             };
         }
     }

@@ -11,5 +11,7 @@ namespace TaskMenagementAPI.DTOs.ProjectTasks
         public string Description { get; set; } = "";
 
         public ProjectTaskStatus Status { get; set; }
+
+        public ProjectTaskPriority Priority { get; set; }
     }
 }
