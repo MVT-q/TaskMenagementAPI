@@ -18,11 +18,11 @@ namespace TaskMenagementAPI.Controllers
         }
 
         [Authorize]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ProjectDto>> GetProjectById(int id)
+        [HttpGet("{projectId}")]
+        public async Task<ActionResult<ProjectDto>> GetProjectById(int projectId)
         {
             var project = await _projectService
-                .GetProjectByIdAsync(id, CurrentUserId);
+                .GetProjectByIdAsync(projectId, CurrentUserId);
 
             if (project == null)
                 return NotFound();
@@ -57,11 +57,11 @@ namespace TaskMenagementAPI.Controllers
         }
 
         [Authorize]
-        [HttpPut("{id}")]
-        public async Task<ActionResult<ProjectDto>> UpdateProject(int id, UpdateProjectDto dto)
+        [HttpPut("{projectId}")]
+        public async Task<ActionResult<ProjectDto>> UpdateProject(int projectId, UpdateProjectDto dto)
         {
             var project = await _projectService
-                .UpdateProjectAsync(id, CurrentUserId, dto);
+                .UpdateProjectAsync(projectId, CurrentUserId, dto);
 
             if(project == null)
                 return NotFound();
@@ -70,16 +70,62 @@ namespace TaskMenagementAPI.Controllers
         }
 
         [Authorize]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProject(int id)
+        [HttpDelete("{projectId}")]
+        public async Task<IActionResult> DeleteProject(int projectId)
         {
             var delete = await _projectService
-                .DeleteProjectAsync(id, CurrentUserId);
+                .DeleteProjectAsync(projectId, CurrentUserId);
 
             if(!delete)
                 return NotFound();
 
             return NoContent();
+        }
+
+        [Authorize]
+        [HttpGet("{projectId}/members")]
+        public async Task<ActionResult<IEnumerable<ProjectMemberDto>>> GetProjectMembers(int projectId)
+        {
+            var members = await _projectService
+                .GetProjectMembersAsync(projectId, CurrentUserId);
+
+            if (members == null)
+                return NotFound();
+
+            return Ok(members);
+        }
+
+        [Authorize]
+        [HttpGet("{projectId}/members/{userId}")]
+        public async Task<ActionResult<ProjectMemberDto>> GetMemberById(int projectId, int userId)
+        {
+            var member = await _projectService
+                .GetMemberByIdAsync(projectId, CurrentUserId, userId);
+
+            if (member == null)
+                return NotFound();
+
+            return Ok(member);
+        }
+
+        [Authorize]
+        [HttpPost("{projectId}/members")]
+        public async Task<ActionResult<ProjectMemberDto>> AddProjectMember(int projectId, AddProjectMemberDto dto)
+        {
+            var member = await _projectService
+                .AddProjectMemberAsync(projectId, CurrentUserId, dto);
+
+            if (member == null)
+                return NotFound();
+
+            return CreatedAtAction(
+                nameof(GetMemberById),
+                new
+                {
+                    projectId,
+                    userId = member.UserId
+                },
+                member);
         }
     }
 }

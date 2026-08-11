@@ -27,5 +27,15 @@ namespace TaskMenagementAPI.Services
 
             return project;
         }
+
+        public async Task<ProjectMember?> GetProjectMemberAsync(int projectId, int currentUserId)
+        {          
+            var member = await _context.Members
+                .FirstOrDefaultAsync(pm =>
+                    pm.ProjectId == projectId &&
+                    pm.UserId == currentUserId);
+
+            return member;
+        }
     }
 }
