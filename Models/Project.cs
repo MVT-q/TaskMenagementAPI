@@ -15,5 +15,7 @@
         public User Owner { get; set; } = null!;
 
         public ICollection<ProjectTask> Tasks { get; set; } = new List<ProjectTask>();
+
+        public ICollection<ProjectMember> Members { get; set; } = new List<ProjectMember>();
     }
 }

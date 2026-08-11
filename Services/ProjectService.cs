@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TaskMenagementAPI.Data;
 using TaskMenagementAPI.DTOs.Projects;
+using TaskMenagementAPI.Enums;
 using TaskMenagementAPI.Exceptions;
 using TaskMenagementAPI.Models;
 
@@ -39,7 +40,16 @@ namespace TaskMenagementAPI.Services
                 OwnerId = currentUserId
             };
 
+            var manager = new ProjectMember
+            {
+                UserId = currentUserId,
+                Project = project,
+                Role = ProjectRole.Manager
+            };
+
             _context.Projects.Add(project);
+
+            _context.Members.Add(manager);
 
             await _context.SaveChangesAsync();
 

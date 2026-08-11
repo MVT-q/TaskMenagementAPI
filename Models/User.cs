@@ -13,5 +13,7 @@ namespace TaskMenagementAPI.Models
         public UserRole Role { get; set; } = UserRole.User;
 
         public ICollection<Project> Projects { get; set; } = new List<Project>();
+
+        public ICollection<ProjectMember> ProjectMemberships { get; set; } = new List<ProjectMember>();
     }
 }

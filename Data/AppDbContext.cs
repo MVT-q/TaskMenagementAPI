@@ -14,6 +14,8 @@ namespace TaskMenagementAPI.Data
 
         public DbSet<ProjectTask> Tasks { get; set; } = null!;
 
+        public DbSet<ProjectMember> Members { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -23,6 +25,22 @@ namespace TaskMenagementAPI.Data
                 .WithOne(t => t.Project)
                 .HasForeignKey(t => t.ProjectId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ProjectMember>()
+                .HasOne(pm => pm.Project)
+                .WithMany(p => p.Members)
+                .HasForeignKey(pm => pm.ProjectId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ProjectMember>()
+                .HasOne(pm => pm.User)
+                .WithMany(u => u.ProjectMemberships)
+                .HasForeignKey(pm => pm.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<ProjectMember>()
+                .HasIndex(pm => new { pm.UserId, pm.ProjectId })
+                .IsUnique();
         }
     }
 }
