@@ -21,13 +21,16 @@ namespace TaskMenagementAPI.Services
 
         public async Task<ProjectDto?> GetProjectByIdAsync(int id, int currentUserId)
         {
-            var project = await _projectAccessService
-                .GetOwnedProjectAsync(id, currentUserId);
+            var currentMember = await _projectAccessService
+                .GetProjectMemberAsync(id, currentUserId);
 
-            if (project == null)
+            if (currentMember == null)
                 return null;
 
-            return ToProjectDto(project);
+            if (currentMember.Project == null)
+                return null;
+
+            return ToProjectDto(currentMember.Project);
         }
 
         public async Task<ProjectDto> CreateProjectAsync(CreateProjectDto dto, int currentUserId)
@@ -67,29 +70,29 @@ namespace TaskMenagementAPI.Services
 
         public async Task<ProjectDto?> UpdateProjectAsync(int id, int currentUserId, UpdateProjectDto dto)
         {
-            var project = await _projectAccessService
-                .GetOwnedProjectAsync(id, currentUserId);
+            var manager = await _projectAccessService
+                .GetProjectManagerAsync(id, currentUserId);
 
-            if (project == null)
+            if (manager == null)
                 return null;
 
-            project.Name = dto.Name;
-            project.Description = dto.Description;
+            manager.Project.Name = dto.Name;
+            manager.Project.Description = dto.Description;
 
             await _context.SaveChangesAsync();
 
-            return ToProjectDto(project);
+            return ToProjectDto(manager.Project);
         }
 
         public async Task<bool> DeleteProjectAsync(int id, int currentUserId)
         {
-            var project = await _projectAccessService
-                .GetOwnedProjectAsync(id, currentUserId);
+            var manager = await _projectAccessService
+                .GetProjectManagerAsync(id, currentUserId);
 
-            if (project == null)
+            if (manager == null)
                 return false;
 
-            _context.Projects.Remove(project);
+            _context.Projects.Remove(manager.Project);
 
             await _context.SaveChangesAsync();
 
@@ -98,10 +101,10 @@ namespace TaskMenagementAPI.Services
 
         public async Task<List<ProjectMemberDto>?> GetProjectMembersAsync(int id, int currentUserId)
         {
-            var project = await _projectAccessService
-                .GetOwnedProjectAsync(id, currentUserId);
+            var currentMember = await _projectAccessService
+                .GetProjectMemberAsync(id, currentUserId);
 
-            if (project == null)
+            if (currentMember == null)
                 return null;
 
             var members = await _context.Members
@@ -109,18 +112,15 @@ namespace TaskMenagementAPI.Services
                 .Where(pm => pm.ProjectId == id)
                 .ToListAsync();
 
-            if (members == null)
-                return null;
-
             return members.Select(ToMemberDto).ToList();
         }
 
         public async Task<ProjectMemberDto?> GetMemberByIdAsync(int id, int currentUserId, int userId)
         {
-            var project = await _projectAccessService
-                .GetOwnedProjectAsync(id, currentUserId);
+            var currentMember = await _projectAccessService
+                .GetProjectMemberAsync(id, currentUserId);
 
-            if (project == null)
+            if (currentMember == null)
                 return null;
 
             var member = await _context.Members
@@ -137,20 +137,11 @@ namespace TaskMenagementAPI.Services
 
         public async Task<ProjectMemberDto?> AddProjectMemberAsync(int id, int currentUserId, AddProjectMemberDto dto)
         {
-            var project = await _context.Projects
-                .FirstOrDefaultAsync(p => p.Id == id);
+            var manager = await _projectAccessService
+                .GetProjectManagerAsync(id, currentUserId);
 
-            if (project == null)
-                return null;
-
-            var currentMember = await _projectAccessService
-                .GetProjectMemberAsync(id, currentUserId);
-
-            if (currentMember == null)
-                return null;
-
-            if (currentMember.Role != ProjectRole.Manager)
-                throw new AccessDeniedException("You don't have permission to manage this project");
+            if (manager == null)
+                return null;           
 
             var alreadyMember = await _context.Members
                 .AnyAsync(pm =>
@@ -168,7 +159,7 @@ namespace TaskMenagementAPI.Services
 
             var member = new ProjectMember
             {
-                ProjectId = project.Id,
+                ProjectId = id,
                 UserId = user.Id,
                 User = user,
                 Role = ProjectRole.Member
@@ -186,20 +177,11 @@ namespace TaskMenagementAPI.Services
             if (currentUserId == userId)
                 throw new CannotDeleteYourselfException("You cannot delete yourself from project");
 
-            var project = await _context.Projects
-                .FirstOrDefaultAsync(p => p.Id == id);
+            var manager = await _projectAccessService
+                .GetProjectManagerAsync(id, currentUserId);
 
-            if (project == null)
+            if (manager == null)
                 return false;
-
-            var currentMember = await _projectAccessService
-                .GetProjectMemberAsync(id, currentUserId);
-
-            if (currentMember == null)
-                return false;
-
-            if (currentMember.Role != ProjectRole.Manager)
-                throw new AccessDeniedException("You don't have permission to manage this project");
 
             var member = await _context.Members
                 .Include(pm => pm.User)
@@ -222,20 +204,11 @@ namespace TaskMenagementAPI.Services
             if (currentUserId == userId)
                 throw new CannotChangeOwnRoleException("You cannot change your own role");
 
-            var project = await _context.Projects
-                .FirstOrDefaultAsync(p => p.Id == id);
+            var manager = await _projectAccessService
+                .GetProjectManagerAsync(id, currentUserId);
 
-            if (project == null)
+            if (manager == null)
                 return null;
-
-            var currentMember = await _projectAccessService
-                .GetProjectMemberAsync(id, currentUserId);
-
-            if (currentMember == null)
-                return null;
-
-            if (currentMember.Role != ProjectRole.Manager)
-                throw new AccessDeniedException("You don't have permission to manage this project");
 
             var member = await _context.Members
                 .Include(pm => pm.User)

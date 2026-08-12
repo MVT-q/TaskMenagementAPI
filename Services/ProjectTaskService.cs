@@ -24,7 +24,7 @@ namespace TaskMenagementAPI.Services
         public async Task<ProjectTaskDto?> GetTaskByIdAsync(int projectId, int currentUserId, int taskId)
         {
             if (await _projectAccessService
-                .GetOwnedProjectAsync(projectId, currentUserId) == null)
+                .GetProjectMemberAsync(projectId, currentUserId) == null)
                 return null;
 
             var task = await _context.Tasks
@@ -41,10 +41,10 @@ namespace TaskMenagementAPI.Services
         public async Task<ProjectTaskDto?> CreateTaskAsync(int projectId, CreateProjectTaskDto dto, int currentUserId)
         {
             if (await _projectAccessService
-                .GetOwnedProjectAsync(projectId, currentUserId) == null)
+                .GetProjectManagerAsync(projectId, currentUserId) == null)
                 return null;
 
-            if(dto.DueDate < DateTime.UtcNow)
+            if (dto.DueDate < DateTime.UtcNow)
                 throw new InvalidDueDateException("Date cannot be earlier than current date");
 
             var task = new ProjectTask
@@ -65,7 +65,7 @@ namespace TaskMenagementAPI.Services
         public async Task<List<ProjectTaskDto>?> GetProjectTasksAsync(int projectId, int currentUserId)
         {
             if (await _projectAccessService
-                .GetOwnedProjectAsync(projectId, currentUserId) == null)
+                .GetProjectMemberAsync(projectId, currentUserId) == null)
                 return null;
 
             var tasks = await _context.Tasks
@@ -78,7 +78,7 @@ namespace TaskMenagementAPI.Services
         public async Task<ProjectTaskDto?> UpdateProjectTaskAsync(int projectId, int currentUserId, int taskId, UpdateProjectTaskDto dto)
         {
             if (await _projectAccessService
-                .GetOwnedProjectAsync(projectId, currentUserId) == null)
+                .GetProjectManagerAsync(projectId, currentUserId) == null)
                 return null;
 
             var task = await _context.Tasks
@@ -100,7 +100,7 @@ namespace TaskMenagementAPI.Services
         public async Task<bool> DeleteProjectTaskAsync(int projectId, int currentUserId, int taskId)
         {
             if (await _projectAccessService
-                .GetOwnedProjectAsync(projectId, currentUserId) == null)
+                .GetProjectManagerAsync(projectId, currentUserId) == null)
                 return false;
 
             var task = await _context.Tasks
@@ -121,7 +121,7 @@ namespace TaskMenagementAPI.Services
         public async Task<ProjectTaskDto?> UpdateTaskStatusAsync(int projectId, int taskId, int currentUserId, UpdateProjectTaskStatusDto dto)
         {
             if (await _projectAccessService
-                .GetOwnedProjectAsync(projectId, currentUserId) == null)
+                .GetProjectMemberAsync(projectId, currentUserId) == null)
                 return null;
 
             var task = await _context.Tasks
@@ -145,7 +145,7 @@ namespace TaskMenagementAPI.Services
         public async Task<ProjectTaskDto?> UpdateTaskPriorityAsync(int projectId, int taskId, int currentUserId, UpdateProjectTaskPriorityDto dto)
         {
             if (await _projectAccessService
-                .GetOwnedProjectAsync(projectId, currentUserId) == null)
+                .GetProjectManagerAsync(projectId, currentUserId) == null)
                 return null;
 
             var task = await _context.Tasks
@@ -168,8 +168,9 @@ namespace TaskMenagementAPI.Services
 
         public async Task<ProjectTaskDto?> UpdateTaskDueDateAsync(int projectId, int taskId, int currentUserId, UpdateProjectTaskDueDateDto dto)
         {
+
             if (await _projectAccessService
-                .GetOwnedProjectAsync(projectId, currentUserId) == null)
+                .GetProjectManagerAsync(projectId, currentUserId) == null)
                 return null;
 
             var task = await _context.Tasks
