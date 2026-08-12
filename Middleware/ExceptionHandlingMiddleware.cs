@@ -27,6 +27,8 @@ namespace TaskMenagementAPI.Middleware
                     InvalidProjectTaskStatusException => StatusCodes.Status400BadRequest,
                     InvalidProjectTaskPriorityException => StatusCodes.Status400BadRequest,
                     InvalidDueDateException => StatusCodes.Status400BadRequest,
+                    CannotDeleteYourselfException => StatusCodes.Status400BadRequest,
+                    CannotChangeOwnRoleException => StatusCodes.Status400BadRequest,
 
                     AccessDeniedException => StatusCodes.Status403Forbidden,
 

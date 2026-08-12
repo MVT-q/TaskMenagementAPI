@@ -181,6 +181,78 @@ namespace TaskMenagementAPI.Services
             return ToMemberDto(member);
         }
 
+        public async Task<bool> DeleteMemberAsync(int id, int currentUserId, int userId)
+        {
+            if (currentUserId == userId)
+                throw new CannotDeleteYourselfException("You cannot delete yourself from project");
+
+            var project = await _context.Projects
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (project == null)
+                return false;
+
+            var currentMember = await _projectAccessService
+                .GetProjectMemberAsync(id, currentUserId);
+
+            if (currentMember == null)
+                return false;
+
+            if (currentMember.Role != ProjectRole.Manager)
+                throw new AccessDeniedException("You don't have permission to manage this project");
+
+            var member = await _context.Members
+                .Include(pm => pm.User)
+                .FirstOrDefaultAsync(pm =>
+                    pm.ProjectId == id &&
+                    pm.UserId == userId);
+
+            if (member == null)
+                return false;           
+
+            _context.Members.Remove(member);
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<ProjectMemberDto?> ChangeProjectMemberRoleAsync(int id, int currentUserId, int userId, UpdateProjectMemberRoleDto dto)
+        {
+            if (currentUserId == userId)
+                throw new CannotChangeOwnRoleException("You cannot change your own role");
+
+            var project = await _context.Projects
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (project == null)
+                return null;
+
+            var currentMember = await _projectAccessService
+                .GetProjectMemberAsync(id, currentUserId);
+
+            if (currentMember == null)
+                return null;
+
+            if (currentMember.Role != ProjectRole.Manager)
+                throw new AccessDeniedException("You don't have permission to manage this project");
+
+            var member = await _context.Members
+                .Include(pm => pm.User)
+                .FirstOrDefaultAsync(pm =>
+                    pm.ProjectId == id &&
+                    pm.UserId == userId);
+
+            if (member == null)
+                return null;
+
+            member.Role = dto.Role;
+
+            await _context.SaveChangesAsync();
+
+            return ToMemberDto(member);
+        }
+
         private static ProjectDto ToProjectDto(Project project)
         {
             return new ProjectDto

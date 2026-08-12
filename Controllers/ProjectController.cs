@@ -39,7 +39,7 @@ namespace TaskMenagementAPI.Controllers
 
             return CreatedAtAction(
                 nameof(GetProjectById),
-                new { id = project.Id },
+                new { projectId = project.Id },
                 project);
         }
 
@@ -126,6 +126,32 @@ namespace TaskMenagementAPI.Controllers
                     userId = member.UserId
                 },
                 member);
+        }
+
+        [Authorize]
+        [HttpDelete("{projectId}/members/{userId}")]
+        public async Task<IActionResult> DeleteMember(int projectId, int userId)
+        {
+            var delete = await _projectService
+                .DeleteMemberAsync(projectId, CurrentUserId, userId);
+
+            if (!delete)
+                return NotFound();
+
+            return NoContent();
+        }
+
+        [Authorize]
+        [HttpPatch("{projectId}/members/{userId}")]
+        public async Task<ActionResult<ProjectMemberDto>> ChangeProjectMemberRole(int projectId, int userId, UpdateProjectMemberRoleDto dto)
+        {
+            var member = await _projectService
+                .ChangeProjectMemberRoleAsync(projectId, CurrentUserId, userId, dto);
+
+            if (member == null) 
+                return NotFound();
+
+            return Ok(member);
         }
     }
 }
