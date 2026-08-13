@@ -62,7 +62,7 @@ namespace TaskMenagementAPI.Services
         public async Task<List<ProjectDto>> GetMyProjectsAsync(int currentUserId)
         {
             var projects = await _context.Projects
-                .Where(p => p.OwnerId == currentUserId)
+                .Where(p => p.Members.Any(pm => pm.UserId == currentUserId))
                 .ToListAsync();  
             
             return projects.Select(ToProjectDto).ToList();

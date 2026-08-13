@@ -19,5 +19,9 @@ namespace TaskMenagementAPI.Models
         public ProjectTaskPriority Priority { get; set; } = ProjectTaskPriority.Medium;
 
         public DateTime? DueDate { get; set; }
+
+        public int? AssigneedId { get; set; }
+
+        public User? Assignee { get; set; }
     }
 }

@@ -15,5 +15,9 @@ namespace TaskMenagementAPI.DTOs.ProjectTasks
         public ProjectTaskPriority Priority { get; set; }
 
         public DateTime? DueDate { get; set; }
+
+        public int? AssigneeId { get; set; }
+
+        public string? AssigneeUsername { get; set; }
     }
 }

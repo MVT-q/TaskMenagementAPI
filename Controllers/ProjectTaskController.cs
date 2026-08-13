@@ -94,7 +94,8 @@ namespace TaskMenagementAPI.Controllers
         [HttpPatch("{taskId}/status")]
         public async Task<ActionResult<ProjectTaskDto>> UpdateTaskStatus(int projectId, int taskId, UpdateProjectTaskStatusDto dto)
         {
-            var task = await _projectTaskService.UpdateTaskStatusAsync(projectId, taskId, CurrentUserId, dto);
+            var task = await _projectTaskService
+                .UpdateTaskStatusAsync(projectId, taskId, CurrentUserId, dto);
 
             if (task == null)
                 return NotFound();
@@ -106,7 +107,8 @@ namespace TaskMenagementAPI.Controllers
         [HttpPatch("{taskId}/priority")]
         public async Task<ActionResult<ProjectTaskDto>> UpdateTaskPriority(int projectId, int taskId, UpdateProjectTaskPriorityDto dto)
         {
-            var task = await _projectTaskService.UpdateTaskPriorityAsync(projectId, taskId, CurrentUserId, dto);
+            var task = await _projectTaskService
+                .UpdateTaskPriorityAsync(projectId, taskId, CurrentUserId, dto);
 
             if (task == null)
                 return NotFound();
@@ -118,7 +120,21 @@ namespace TaskMenagementAPI.Controllers
         [HttpPatch("{taskId}/due-date")]
         public async Task<ActionResult<ProjectTaskDto>> UpdateTaskDueDate(int projectId, int taskId, UpdateProjectTaskDueDateDto dto)
         {
-            var task = await _projectTaskService.UpdateTaskDueDateAsync(projectId, taskId, CurrentUserId, dto);
+            var task = await _projectTaskService
+                .UpdateTaskDueDateAsync(projectId, taskId, CurrentUserId, dto);
+
+            if (task == null)
+                return NotFound();
+
+            return Ok(task);
+        }
+
+        [Authorize]
+        [HttpPatch("{taskId}/assignee")]
+        public async Task<ActionResult<ProjectTaskDto>> AppointOnTask(int projectId, int taskId, UpdateProjectTaskAssigneeDto dto)
+        {
+            var task = await _projectTaskService
+                .AppointOnTaskAsync(projectId, taskId, CurrentUserId, dto);
 
             if (task == null)
                 return NotFound();

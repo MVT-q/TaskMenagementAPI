@@ -41,6 +41,12 @@ namespace TaskMenagementAPI.Data
             modelBuilder.Entity<ProjectMember>()
                 .HasIndex(pm => new { pm.UserId, pm.ProjectId })
                 .IsUnique();
+
+            modelBuilder.Entity<ProjectTask>()
+                .HasOne(t => t.Assignee)
+                .WithMany()
+                .HasForeignKey(t => t.AssigneedId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
