@@ -47,13 +47,10 @@ namespace TaskMenagementAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProjectDto>>> GetMyProjects()
         {
-            var project = await _projectService
+            var projects = await _projectService
                 .GetMyProjectsAsync(CurrentUserId);
 
-            if (project == null)
-                return NotFound();
-
-            return Ok(project);
+            return Ok(projects);
         }
 
         [Authorize]
@@ -87,10 +84,7 @@ namespace TaskMenagementAPI.Controllers
         public async Task<ActionResult<IEnumerable<ProjectMemberDto>>> GetProjectMembers(int projectId)
         {
             var members = await _projectService
-                .GetProjectMembersAsync(projectId, CurrentUserId);
-
-            if (members == null)
-                return NotFound();
+                .GetAllProjectMembersAsync(projectId, CurrentUserId);
 
             return Ok(members);
         }

@@ -58,9 +58,6 @@ namespace TaskMenagementAPI.Controllers
             var tasks = await _projectTaskService
                 .GetProjectTasksAsync(projectId, CurrentUserId);
 
-            if (tasks == null)
-                return NotFound();
-
             return Ok(tasks);
         }
 
@@ -134,7 +131,7 @@ namespace TaskMenagementAPI.Controllers
         public async Task<ActionResult<ProjectTaskDto>> AppointOnTask(int projectId, int taskId, UpdateProjectTaskAssigneeDto dto)
         {
             var task = await _projectTaskService
-                .AppointOnTaskAsync(projectId, taskId, CurrentUserId, dto);
+                .AssignTaskAsync(projectId, taskId, CurrentUserId, dto);
 
             if (task == null)
                 return NotFound();

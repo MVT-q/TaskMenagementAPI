@@ -28,11 +28,7 @@ namespace TaskMenagementAPI.Services
                 .GetProjectMemberAsync(projectId, currentUserId) == null)
                 return null;
 
-            var task = await _context.Tasks
-                .Include(t => t.Assignee)
-                .FirstOrDefaultAsync(t =>
-                    t.Id == taskId &&
-                    t.ProjectId == projectId);
+            var task = await GetTaskForProjectAsync(projectId, taskId);
 
             if (task == null) 
                 return null;
@@ -84,10 +80,7 @@ namespace TaskMenagementAPI.Services
                 .GetProjectManagerAsync(projectId, currentUserId) == null)
                 return null;
 
-            var task = await _context.Tasks
-                .FirstOrDefaultAsync(t =>
-                    t.Id == taskId &&
-                    t.ProjectId == projectId);
+            var task = await GetTaskForProjectAsync(projectId, taskId);
 
             if (task == null)
                 return null;
@@ -106,10 +99,7 @@ namespace TaskMenagementAPI.Services
                 .GetProjectManagerAsync(projectId, currentUserId) == null)
                 return false;
 
-            var task = await _context.Tasks
-                .FirstOrDefaultAsync(t =>
-                    t.Id == taskId &&
-                    t.ProjectId == projectId);
+            var task = await GetTaskForProjectAsync(projectId, taskId);
 
             if (task == null)
                 return false;
@@ -129,10 +119,7 @@ namespace TaskMenagementAPI.Services
             if (currentMember == null)
                 return null;
 
-            var task = await _context.Tasks
-                .FirstOrDefaultAsync(t =>
-                    t.Id == taskId &&
-                    t.ProjectId == projectId);
+            var task = await GetTaskForProjectAsync(projectId, taskId);
 
             if (task == null)
                 return null;
@@ -160,10 +147,7 @@ namespace TaskMenagementAPI.Services
                 .GetProjectManagerAsync(projectId, currentUserId) == null)
                 return null;
 
-            var task = await _context.Tasks
-                .FirstOrDefaultAsync(t =>
-                    t.Id == taskId &&
-                    t.ProjectId == projectId);
+            var task = await GetTaskForProjectAsync(projectId, taskId);
 
             if (task == null)
                 return null;
@@ -184,10 +168,7 @@ namespace TaskMenagementAPI.Services
                 .GetProjectManagerAsync(projectId, currentUserId) == null)
                 return null;
 
-            var task = await _context.Tasks
-                .FirstOrDefaultAsync(t =>
-                    t.Id == taskId &&
-                    t.ProjectId == projectId);
+            var task = await GetTaskForProjectAsync(projectId, taskId);
 
             if (task == null)
                 return null;
@@ -202,16 +183,13 @@ namespace TaskMenagementAPI.Services
             return ToDto(task);
         }
 
-        public async Task<ProjectTaskDto?> AppointOnTaskAsync(int projectId, int taskId, int currentUserId, UpdateProjectTaskAssigneeDto dto)
+        public async Task<ProjectTaskDto?> AssignTaskAsync(int projectId, int taskId, int currentUserId, UpdateProjectTaskAssigneeDto dto)
         {
             if (await _projectAccessService
                 .GetProjectManagerAsync(projectId, currentUserId) == null)
                 return null;
 
-            var task = await _context.Tasks
-                .FirstOrDefaultAsync(t =>
-                    t.Id == taskId &&
-                    t.ProjectId == projectId);
+            var task = await GetTaskForProjectAsync(projectId, taskId);
 
             if (task == null) 
                 return null;         
@@ -241,6 +219,15 @@ namespace TaskMenagementAPI.Services
             await _context.SaveChangesAsync();
 
             return ToDto(task);
+        }
+
+        private async Task<ProjectTask?> GetTaskForProjectAsync(int projectId, int taskId)
+        {
+            return await _context.Tasks
+                .Include(t => t.Assignee)
+                .FirstOrDefaultAsync(t =>
+                    t.Id == taskId &&
+                    t.ProjectId == projectId);
         }
 
         private static ProjectTaskDto ToDto(ProjectTask task)
