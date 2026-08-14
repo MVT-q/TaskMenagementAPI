@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TaskMenagementAPI.DTOs.Projects;
 using TaskMenagementAPI.DTOs.ProjectTasks;
+using TaskMenagementAPI.Enums;
 using TaskMenagementAPI.Models;
 using TaskMenagementAPI.Services;
 
@@ -53,10 +54,10 @@ namespace TaskMenagementAPI.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProjectTaskDto>>> GetProjectTasks(int projectId)
+        public async Task<ActionResult<IEnumerable<ProjectTaskDto>>> GetProjectTasks(int projectId, TaskSortBy? sortBy, bool descending)
         {
             var tasks = await _projectTaskService
-                .GetProjectTasksAsync(projectId, CurrentUserId);
+                .GetProjectTasksAsync(projectId, CurrentUserId, sortBy, descending);
 
             return Ok(tasks);
         }

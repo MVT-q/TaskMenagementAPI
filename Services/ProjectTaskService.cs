@@ -63,16 +63,41 @@ namespace TaskMenagementAPI.Services
             return ToDto(task);
         }
 
-        public async Task<List<ProjectTaskDto>?> GetProjectTasksAsync(int projectId, int currentUserId)
+        public async Task<List<ProjectTaskDto>?> GetProjectTasksAsync(int projectId, int currentUserId, TaskSortBy? sortBy, bool descending)
         {
             if (await _projectAccessService
                 .GetProjectMemberAsync(projectId, currentUserId) == null)
                 return null;
 
-            var tasks = await _context.Tasks
+            var query = _context.Tasks
                 .Include(t => t.Assignee)
-                .Where(t => t.ProjectId == projectId)
-                .ToListAsync();
+                .Where(t => t.ProjectId == projectId);
+
+            switch (sortBy)
+            {
+                case TaskSortBy.Status:
+                    if (descending)
+                        query = query.OrderByDescending(t => t.Status);
+                    else
+                        query = query.OrderBy(t => t.Status);
+                    break;
+
+                case TaskSortBy.Priority:
+                    if (descending)
+                        query = query.OrderByDescending(t => t.Priority);
+                    else
+                        query = query.OrderBy(t => t.Priority);
+                    break;
+
+                case TaskSortBy.DueDate:
+                    if (descending)
+                        query = query.OrderByDescending(t => t.DueDate);
+                    else
+                        query = query.OrderBy(t => t.DueDate);
+                    break;
+            }
+
+            var tasks = await query.ToListAsync();
 
             return tasks.Select(ToDto).ToList();
         }
