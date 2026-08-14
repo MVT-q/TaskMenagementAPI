@@ -16,10 +16,13 @@ namespace TaskMenagementAPI.Services
 
         private readonly ProjectAccessService _projectAccessService;
 
-        public ProjectTaskService(AppDbContext context, ProjectAccessService projectAccessService)
+        private readonly INotificationService _notificationService;
+
+        public ProjectTaskService(AppDbContext context, ProjectAccessService projectAccessService, INotificationService notificationService)
         {
             _context = context;
             _projectAccessService = projectAccessService;
+            _notificationService = notificationService;
         }
 
         public async Task<ProjectTaskDto?> GetTaskByIdAsync(int projectId, int currentUserId, int taskId)
@@ -217,6 +220,12 @@ namespace TaskMenagementAPI.Services
             }
 
             await _context.SaveChangesAsync();
+
+            if (dto.UserId != null)
+            {
+                await _notificationService
+                    .NotifyTaskAssignedAsync(dto.UserId.Value, task.Id);
+            }
 
             return ToDto(task);
         }

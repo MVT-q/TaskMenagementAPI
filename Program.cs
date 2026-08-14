@@ -89,6 +89,8 @@ namespace TaskMenagementAPI
 
             builder.Services.AddScoped<ProjectAccessService>();
 
+            builder.Services.AddScoped<INotificationService, ConsoleNotificationService>();
+
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())
