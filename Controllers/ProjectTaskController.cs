@@ -54,10 +54,15 @@ namespace TaskMenagementAPI.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProjectTaskDto>>> GetProjectTasks(int projectId, TaskSortBy? sortBy, bool descending)
+        public async Task<ActionResult<IEnumerable<ProjectTaskDto>>> GetProjectTasks(
+            int projectId, 
+            TaskSortBy? sortBy, 
+            bool descending, 
+            ProjectTaskStatus? status,
+            ProjectTaskPriority? priority)
         {
             var tasks = await _projectTaskService
-                .GetProjectTasksAsync(projectId, CurrentUserId, sortBy, descending);
+                .GetProjectTasksAsync(projectId, CurrentUserId, sortBy, descending, status, priority);
 
             return Ok(tasks);
         }

@@ -63,7 +63,13 @@ namespace TaskMenagementAPI.Services
             return ToDto(task);
         }
 
-        public async Task<List<ProjectTaskDto>?> GetProjectTasksAsync(int projectId, int currentUserId, TaskSortBy? sortBy, bool descending)
+        public async Task<List<ProjectTaskDto>?> GetProjectTasksAsync(
+            int projectId, 
+            int currentUserId, 
+            TaskSortBy? sortBy, 
+            bool descending, 
+            ProjectTaskStatus? status,
+            ProjectTaskPriority? priority)
         {
             if (await _projectAccessService
                 .GetProjectMemberAsync(projectId, currentUserId) == null)
@@ -72,6 +78,12 @@ namespace TaskMenagementAPI.Services
             var query = _context.Tasks
                 .Include(t => t.Assignee)
                 .Where(t => t.ProjectId == projectId);
+
+            if(status != null)
+                query = query.Where(t => t.Status == status.Value);
+
+            if (priority != null)
+                query = query.Where(t => t.Priority == priority.Value);
 
             switch (sortBy)
             {
