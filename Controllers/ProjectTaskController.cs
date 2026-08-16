@@ -59,10 +59,20 @@ namespace TaskMenagementAPI.Controllers
             TaskSortBy? sortBy, 
             bool descending, 
             ProjectTaskStatus? status,
-            ProjectTaskPriority? priority)
+            ProjectTaskPriority? priority,
+            int page = 1,
+            int pageSize = 20)
         {
             var tasks = await _projectTaskService
-                .GetProjectTasksAsync(projectId, CurrentUserId, sortBy, descending, status, priority);
+                .GetProjectTasksAsync(
+                projectId, 
+                CurrentUserId, 
+                sortBy, 
+                descending, 
+                status, 
+                priority, 
+                page, 
+                pageSize);
 
             return Ok(tasks);
         }

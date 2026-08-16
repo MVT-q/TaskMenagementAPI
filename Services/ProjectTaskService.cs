@@ -69,7 +69,9 @@ namespace TaskMenagementAPI.Services
             TaskSortBy? sortBy, 
             bool descending, 
             ProjectTaskStatus? status,
-            ProjectTaskPriority? priority)
+            ProjectTaskPriority? priority,
+            int page,
+            int pageSize)
         {
             if (await _projectAccessService
                 .GetProjectMemberAsync(projectId, currentUserId) == null)
@@ -108,6 +110,16 @@ namespace TaskMenagementAPI.Services
                         query = query.OrderBy(t => t.DueDate);
                     break;
             }
+
+            if (page < 1)
+                throw new InvalidPaginationException("Page must be greater than 0");
+
+            if (pageSize < 1 || pageSize > 100)
+                throw new InvalidPaginationException("Page size must be between 1 and 100");
+
+            query = query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize);
 
             var tasks = await query.ToListAsync();
 
