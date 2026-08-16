@@ -60,6 +60,7 @@ namespace TaskMenagementAPI.Controllers
             bool descending, 
             ProjectTaskStatus? status,
             ProjectTaskPriority? priority,
+            string? search,
             int page = 1,
             int pageSize = 20)
         {
@@ -72,7 +73,8 @@ namespace TaskMenagementAPI.Controllers
                 status, 
                 priority, 
                 page, 
-                pageSize);
+                pageSize,
+                search);
 
             return Ok(tasks);
         }

@@ -71,17 +71,23 @@ namespace TaskMenagementAPI.Services
             ProjectTaskStatus? status,
             ProjectTaskPriority? priority,
             int page,
-            int pageSize)
+            int pageSize,
+            string? search)
         {
             if (await _projectAccessService
                 .GetProjectMemberAsync(projectId, currentUserId) == null)
                 return null;
 
             var query = _context.Tasks
-                .Include(t => t.Assignee)
                 .Where(t => t.ProjectId == projectId);
 
-            if(status != null)
+            if (page < 1)
+                throw new InvalidPaginationException("Page must be greater than 0");
+
+            if (pageSize < 1 || pageSize > 100)
+                throw new InvalidPaginationException("Page size must be between 1 and 100");
+
+            if (status != null)
                 query = query.Where(t => t.Status == status.Value);
 
             if (priority != null)
@@ -109,21 +115,28 @@ namespace TaskMenagementAPI.Services
                     else
                         query = query.OrderBy(t => t.DueDate);
                     break;
-            }
+            }          
 
-            if (page < 1)
-                throw new InvalidPaginationException("Page must be greater than 0");
-
-            if (pageSize < 1 || pageSize > 100)
-                throw new InvalidPaginationException("Page size must be between 1 and 100");
+            if(!string.IsNullOrWhiteSpace(search))
+                query = query.Where(t => t.Title.Contains(search));
 
             query = query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize);
 
-            var tasks = await query.ToListAsync();
+            var tasks = await query.Select(t => new ProjectTaskDto
+            {
+                Id = t.Id,
+                Title = t.Title,
+                Description = t.Description,
+                Status = t.Status,
+                Priority = t.Priority,
+                DueDate = t.DueDate,
+                AssigneeId = t.AssigneedId,
+                AssigneeUsername = t.Assignee == null ? null : t.Assignee.Username
+            }).ToListAsync();
 
-            return tasks.Select(ToDto).ToList();
+            return tasks;
         }
 
         public async Task<ProjectTaskDto?> UpdateProjectTaskAsync(int projectId, int currentUserId, int taskId, UpdateProjectTaskDto dto)
