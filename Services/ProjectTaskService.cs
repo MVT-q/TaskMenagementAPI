@@ -18,11 +18,14 @@ namespace TaskMenagementAPI.Services
 
         private readonly INotificationService _notificationService;
 
-        public ProjectTaskService(AppDbContext context, ProjectAccessService projectAccessService, INotificationService notificationService)
+        private readonly ILogger<ProjectTaskService> _logger;
+
+        public ProjectTaskService(AppDbContext context, ProjectAccessService projectAccessService, INotificationService notificationService, ILogger<ProjectTaskService> logger)
         {
             _context = context;
             _projectAccessService = projectAccessService;
             _notificationService = notificationService;
+            _logger = logger;
         }
 
         public async Task<ProjectTaskDto?> GetTaskByIdAsync(int projectId, int currentUserId, int taskId)
@@ -256,10 +259,10 @@ namespace TaskMenagementAPI.Services
 
             var task = await GetTaskForProjectAsync(projectId, taskId);
 
-            if (task == null) 
-                return null;         
+            if (task == null)
+                return null;
 
-            if(dto.UserId == null)
+            if (dto.UserId == null)
             {
                 task.AssigneedId = null;
             }
@@ -268,7 +271,7 @@ namespace TaskMenagementAPI.Services
                 var user = await _context.Users
                     .FirstOrDefaultAsync(u => u.Id == dto.UserId);
 
-                if (user == null) 
+                if (user == null)
                     return null;
 
                 var userId = dto.UserId.Value;
@@ -287,7 +290,20 @@ namespace TaskMenagementAPI.Services
             {
                 await _notificationService
                     .NotifyTaskAssignedAsync(dto.UserId.Value, task.Id);
+
+                _logger.LogInformation(
+                    "User {UserId} assigned task {TaskId} to user {AssigneeId}",
+                    currentUserId,
+                    taskId,
+                    dto.UserId);
             }
+            else
+            {
+                _logger.LogInformation(
+                    "User {UserId} unassigned task {TaskId}",
+                    currentUserId,
+                    taskId);
+            }                
 
             return ToDto(task);
         }

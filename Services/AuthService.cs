@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -9,20 +10,21 @@ using TaskMenagementAPI.DTOs.Auth;
 using TaskMenagementAPI.Enums;
 using TaskMenagementAPI.Exceptions;
 using TaskMenagementAPI.Models;
+using TaskMenagementAPI.Settings;
 
 namespace TaskMenagementAPI.Services
 {
     public class AuthService
     {
-        private readonly IConfiguration _configuration;
+        private readonly JwtOptions _jwtOptions;
 
         private readonly AppDbContext _context;
 
         private readonly IPasswordHasher<User> _passwordHasher;
 
-        public AuthService(IConfiguration configuration, AppDbContext context, IPasswordHasher<User> passwordHasher)
+        public AuthService(IOptions<JwtOptions> jwtOptions, AppDbContext context, IPasswordHasher<User> passwordHasher)
         {
-            _configuration = configuration;
+            _jwtOptions = jwtOptions.Value;
             _context = context;
             _passwordHasher = passwordHasher;
         }
@@ -58,15 +60,15 @@ namespace TaskMenagementAPI.Services
             };
 
             var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+                Encoding.UTF8.GetBytes(_jwtOptions.Key));
 
             var credentials = new SigningCredentials(
                 key: key,
                 algorithm: SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
+                issuer: _jwtOptions.Issuer,
+                audience: _jwtOptions.Audience,
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(30),
                 signingCredentials: credentials);

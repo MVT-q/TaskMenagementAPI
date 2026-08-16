@@ -50,6 +50,10 @@ namespace TaskMenagementAPI
                 });
             });
 
+            var jwtOptions = builder.Configuration
+                .GetSection("Jwt")
+                .Get<JwtOptions>()!;
+
             builder.Services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -61,11 +65,11 @@ namespace TaskMenagementAPI
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
 
-                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        ValidIssuer = jwtOptions.Issuer,
+                        ValidAudience = jwtOptions.Audience,
 
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+                            Encoding.UTF8.GetBytes(jwtOptions.Key))
                     };
                 });
 
@@ -76,6 +80,9 @@ namespace TaskMenagementAPI
 
             builder.Services.Configure<AdminSettings>(
                 builder.Configuration.GetSection("Admin"));
+
+            builder.Services.Configure<JwtOptions>(
+                builder.Configuration.GetSection("Jwt"));
 
             builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
