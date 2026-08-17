@@ -146,7 +146,7 @@ namespace TaskMenagementAPI.Controllers
 
         [Authorize]
         [HttpPatch("{taskId}/assignee")]
-        public async Task<ActionResult<ProjectTaskDto>> AppointOnTask(int projectId, int taskId, UpdateProjectTaskAssigneeDto dto)
+        public async Task<ActionResult<ProjectTaskDto>> AssignTask(int projectId, int taskId, UpdateProjectTaskAssigneeDto dto)
         {
             var task = await _projectTaskService
                 .AssignTaskAsync(projectId, taskId, CurrentUserId, dto);
